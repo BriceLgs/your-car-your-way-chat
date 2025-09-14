@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-PocChatApplication<poc-chat>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.ycyw.poc_chat.PocChatApplication",
+            "projectName": "poc-chat",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
