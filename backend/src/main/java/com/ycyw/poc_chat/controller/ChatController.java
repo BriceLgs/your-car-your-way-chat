@@ -18,9 +18,7 @@ public class ChatController {
     @MessageMapping("/chat.send")
     @SendTo("/topic/chat")
     public Message sendMessage(Message message) {
-        // Sauvegarde du message utilisateur
         chatService.save(message);
-        // Ici, on retourne le message tel quel (conversation réelle, pas auto-reply)
         return message;
     }
 }

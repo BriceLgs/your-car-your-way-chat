@@ -1,59 +1,66 @@
-# YcywPocFrontend
+# POC Chat YCYW – Frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.3.1.
+Ce frontend Angular communique avec le backend Spring Boot via WebSocket (STOMP) et expose un endpoint REST pour récupérer l’historique des messages persistés en base MySQL.
 
-## Development server
+## Prérequis
 
-To start a local development server, run:
+- Node.js 18+ et npm
+- Angular CLI (`npm i -g @angular/cli`)
+- Backend Spring Boot démarré sur `http://localhost:8080` avec MySQL accessible
+
+## Démarrage
 
 ```bash
+npm install
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Ouvrez `http://localhost:4200` dans le navigateur.
 
-## Code scaffolding
+## WebSocket
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+- Endpoint handshake: `ws://localhost:8080/ws`
+- Application destination: `/app`
+- Topic de diffusion: `/topic/chat`
+- Envoyer un message: publier sur `/app/chat.send` un JSON de type `Message`:
 
-```bash
-ng generate component component-name
+```json
+{
+  "utilisateurId": 123,
+  "typeContact": "chat",
+  "contenu": "Bonjour"
+}
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+Le message est sauvegardé en base et renvoyé tel quel sur `/topic/chat`.
 
-```bash
-ng generate --help
+## REST – Historique de conversation
+
+- `GET http://localhost:8080/api/conversations/{utilisateurId}`
+- Renvoie la liste des messages triés par date croissante.
+
+## Configuration Backend (rappel)
+
+Dans `backend/src/main/resources/application.properties`:
+
+```
+spring.datasource.url=jdbc:mysql://localhost:3306/ycyw_poc?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+spring.datasource.username=... 
+spring.datasource.password=...
+spring.jpa.hibernate.ddl-auto=update
 ```
 
-## Building
+Créez la base `ycyw_poc` et ajustez les identifiants. Évitez de committer les mots de passe en clair.
 
-To build the project run:
+## Scripts utiles
 
-```bash
-ng build
-```
+- Lancer en dev: `ng serve`
+- Build prod: `ng build`
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+## Tests rapides (POC)
 
-## Running unit tests
+1. Démarrer le backend sur 8080
+2. Démarrer ce frontend sur 4200
+3. Ouvrir 2 onglets sur `http://localhost:4200`
+4. Envoyer un message depuis un onglet → il apparaît dans les deux onglets et est stocké en base
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
